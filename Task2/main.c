@@ -4,6 +4,10 @@
 #include <string.h>
 #include <ctype.h>
 
+
+//declare functions on top
+//functions defined below main
+void printWelcome();
 int randomNumber(int x);
 const char* selectDifficulty(int x);
 void drawHangman(int dNumLives);
@@ -11,61 +15,62 @@ void generateMessage();
 void printChocolate();
 
 
+//main
 int main(){
 
-	printf("Hi there!\n");
-	printf("Welcome to The Hangman Game!\n");
-	printf("\n");
-	printf("Play by entering letters in the console.\n");
-	printf("If you want to quit at any point, just type in 'quit'.\n");
-	printf("Do not enter the correctly guessed letter twice! You'll lose a point.\n");
-	printf("Let's play. :)\n");
-	printf("\n");
-
-	//char words[][7]={"milk","coffee","curtain","cook","phone","flower","cloud","table","glasses","light","action","laptop","koala","pasta"};
-
-	//printf("%s\n", words[randomNumber(14)]);
-	// words[randomNumber(14)];
-	char sGuesses[20];
-	char cLetterGuessed;
-	char sWord[30];
-	int dNumCorrect = 0;
-	int dCounter = 0 ;
-	int dNumLives = 7;
-	int dNumDiff=0;
-
-	printf("Please select a difficulty. 1 or 2?\n");
+	//declare variables
+	char sGuesses[20]; 
+	char cLetterGuessed; //holds letter guessed
+	char sWord[30]; //holds the word that user has to guess, length big enough because its not fixed length
+	int dNumCorrect = 0; //counts correct guesses
+	int dCounter = 0 ; //counter which checks if change was made after user guesses
+	int dNumLives = 7; //decreases number of lives as the user guesses wrong
+	int dNumDiff=0;  //number of difficulty
+	
+	//print welcome message
+	printWelcome();
+	
+	//ask user to choose a difficulty
+	printf("Please select a difficulty. Type 1 for EASY and 2 for HARD.\n");
 	scanf("%d", &dNumDiff);
+
+	//if its none of the given two, error
 	if (dNumDiff!=1 && dNumDiff!=2)
 	{
+		//print error message and return main
+		//user must rerun the program
 		printf("Please select 1 or 2.\n");
 		return 0;
 	}
 
+	//print what user selected
 	printf("\nYou have selected difficulty %d.\n",dNumDiff);
-	strcpy(sWord, selectDifficulty(dNumDiff));
-	//printf("%s\n", selectDifficulty(dNumDiff));
-	int dLength = strlen(sWord);
-	char sWordNew[30];
-	strcpy(sWordNew, selectDifficulty(dNumDiff));
-	int dVisited[strlen(sWord)];
-	memset(sWordNew, '_', strlen(selectDifficulty(dNumDiff))*sizeof(char));
-	memset(dVisited, 0, strlen(selectDifficulty(dNumDiff))*sizeof(int));
+
+	//another variable declaring because difficulty had to be chosen first
+
 	
+	strcpy(sWord, selectDifficulty(dNumDiff)); //put the word from selected difficulty array to sWord used for the game
+	int dLength = strlen(sWord); //store length of sWord (was unknown until now)
+	char sWordNew[30]; //string that will get displayed to the user with underscores instead of letters that will change to letters of sWord when correctly guessed
+	strcpy(sWordNew, sWord); //copy sWord to sWordNew
 
-	//for (int i = 0; i < strlen(sWord); ++i)
-	//{
-	//	sWordNew[i] = '0';
-	//}
-	//printf("%s\n", sWordNew);
+	//int array that stores 0 that will get changed to 1 when letter correctly guessed
+	int dVisited[strlen(sWord)]; //has length of sWord
 
+	//use memset function to set every array element to desired element
+	memset(sWordNew, '_', strlen(selectDifficulty(dNumDiff))*sizeof(char)); //set every char of sWordNew array to underscore
+	memset(dVisited, 0, strlen(selectDifficulty(dNumDiff))*sizeof(int)); //set every int of dVisited array to 0
+
+
+	//message to user to enter a guess
 	printf("Please enter a letter\n");
 	
 
+	//while loop until 
 	while(dNumCorrect < dLength){
 
+		//accept user input
 		scanf("%s", sGuesses);
-		//fgets(sGuesses, 20, stdin);
 
 		if (strncmp(sGuesses, "quit", 4) == 0)
 		{
@@ -85,63 +90,90 @@ int main(){
 
 		printf("\nYou entered the letter: %c\n", cLetterGuessed);
 
+		//loop through all letters of sWord with a for loop
 		for (int i = 0; i < strlen(sWord); ++i){
 			
 
-			//letters that are visited/alr guesses will be skipped
+			//if dVisited at i is 1 means its correctly guessed so that letter gets skipped (continue)
 			if (dVisited[i]==1){
 			continue;
 		    }
 
+		    //if our word at i (some letter) is equal to the letter user guessed
 			if (sWord[i]==cLetterGuessed){
 
-			sWordNew[i]=cLetterGuessed;
-			dVisited[i]=1;
-			dNumCorrect++;
+				//set sWordNew that gets displayed to the user at i (letter position) to that correctly guessed letter
+				sWordNew[i]=cLetterGuessed;
+				//set dVisited at i (letter position) to 1 (visited/correctly guessed)
+				dVisited[i]=1;
+				//increase counter of correct guesses
+				dNumCorrect++;
 			
 			//winning condition
+			//if number of correct guesses is the same as length of the word user wins
 			if (dNumCorrect == dLength){	
-			printf("\nYAAAY! You guessed the word!\n");
-			printf("\nYou WIN!!!\n");
-			printf("\n    Here's a chocolate! :)\n");
-			printChocolate();
-			return 1;
+				//print winning message and exit main
+				printChocolate();
+				return 1;
 			}//endif
 
+			//if number of correct guesses increased by one, a correct guess was made
 			if(dNumCorrect == dCounter+1){
-			printf("\nCorrect! Woohoo!\n");
-			generateMessage();
-			printf("\nGuess again.\n");
-			printf("\n");
+				//let user know he guessed correctly
+				printf("\nCorrect! Woohoo!\n");
+				//generate random correct guessed message
+				generateMessage();
+				printf("\nGuess again.\n");
+				printf("\n");
 			}//endif
 
 		
 			}//endif
 
 		}//endfor
-		if (dNumCorrect == dCounter )
-		{
+
+		//if no change was made then no correct guesses 
+		if (dNumCorrect == dCounter ){
+
+			//decrease num of lives
 			dNumLives--;
+			//let user know he was wrong and how many lives he has left
 			printf("\nWRONG! You have %d lives left.\n", dNumLives);
-			//hangman drawn HERE
+			//hangman gets drawn
 			drawHangman(dNumLives);
 		}
+
+		//if lives are 0 user lost
 		if (dNumLives == 0)
 			{
+				//let him know he lost and break while
 				printf("\nAww man! You lost. :(\n");
 				printf("The word was %s.\n", sWord);
 				printf("Play again for better luck.\n");
 				break;
 			}
-	//printf("%d\n", dNumCorrect);
+
+	//print current state of sWordNew
 	printf("%s\n", sWordNew);
-	//printf("%s\n", dGuesses);
 
 
 	}//endwhile
 
 	return 1;
 }//endmain
+
+
+//welcome message function
+void printWelcome(){
+	printf("Hi there!\n");
+	printf("Welcome to The Hangman Game!\n");
+	printf("\n");
+	printf("Play by entering letters in the console.\n");
+	printf("If you want to quit at any point, just type in 'quit'.\n");
+	printf("Do not enter the correctly guessed letter twice! You'll lose a point.\n");
+	printf("Let's play. :)\n");
+	printf("\n");
+}
 
 
 //random number function
@@ -166,8 +198,9 @@ const char* selectDifficulty(int x){
 		static char words[][8]	=	{"milk","coffee","curtain","cook",
 									"phone","flower","cloud","table",
 									"glasses","light","action","laptop",
-									"koala","pasta"};
-		strcpy(sWord, words[randomNumber(14)]);
+									"koala","pasta","cactus","socks",
+									"plane","sunny"};
+		strcpy(sWord, words[randomNumber(18)]);
 
 
 	}
@@ -184,8 +217,10 @@ const char* selectDifficulty(int x){
 
 }
 
-
+//function to print hangman
 void drawHangman(int dNumLives){
+	//switch case statement
+	//as the number of lives gets lower, the picture of the hangman progresses
 	switch (dNumLives){
 	case 6:
 		printf("\n");
@@ -294,6 +329,10 @@ void generateMessage(){
 }
 
 void printChocolate(){
+
+	printf("\nYAAAY! You guessed the word!\n");
+			printf("\nYou WIN!!!\n");
+			printf("\n    Here's a chocolate! :)\n");
 
 	printf(
  "    _____________,-.___     _\n"
