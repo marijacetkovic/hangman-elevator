@@ -28,7 +28,7 @@ const char* intToFloor(int dFloorNum);
 void printWelcome();
 void printButtons();
 void printStatus(int dFloorInt);
-void peopleStatus(int dPeople);
+//void peopleStatus(int dPeople);
 
 
 
@@ -80,12 +80,12 @@ int main(){
 		//take user input to change floors using scanf
 		scanf("%s", sFloorChosen);
 
-		printf("How many people are entering?\n");
-		scanf("%d",&dPeople);
-		if(dPeople>4){
-			printf("No more than 4 can fit.\n");
-			dPeople=4;
-		}
+		// printf("How many people are entering?\n");
+		// scanf("%d",&dPeople);
+		// if(dPeople>4){
+		// 	printf("No more than 4 can fit.\n");
+		// 	dPeople=4;
+		// }
 
 		//if the user enters EXIT, break the main while loop and end the program
 		if (strncmp(sFloorChosen, "EXIT", 4)==0){
@@ -96,7 +96,7 @@ int main(){
 		//copy new default floor to default floor
 		strcpy(sFloorDefault,sFloorNewDefault);
 
-		//change two floor variables to integers
+		//change two floor string variables to integers
 		dFloorChosenInt=sFloorToInt(sFloorChosen);
 		dFloorDefaultInt=sFloorToInt(sFloorDefault);
 		
@@ -117,32 +117,32 @@ int main(){
 			while(dFloorChosenInt>dFloorDefaultInt){
 				dFloorDefaultInt++;
 				printStatus(dFloorDefaultInt);
-				peopleStatus(dPeople);
+				//peopleStatus(dPeople);
 				strcpy(sFloorNewDefault,intToFloor(dFloorDefaultInt));
 				if ( dFloorDefaultInt != dFloorChosenInt ) {
 					printf("\nStopping here?\n");
 					scanf("%s",sStopping);
 					if (strcmp(sStopping,"YES")==0){
-						printf("How many are leaving?\n");
-						scanf("%d", &dPeopleNew);
-						dPeople -= dPeopleNew;
-						peopleStatus(dPeople);
+						// printf("How many are leaving?\n");
+						// scanf("%d", &dPeopleNew);
+						// dPeople -= dPeopleNew;
+						// peopleStatus(dPeople);
 
-						printf("Are there new people?\n");
-						scanf("%s",sPeople);
-						if (strcmp(sPeople,"YES")==0){
-							printf("How many?\n");
-							scanf("%d",&dPeopleNew);
-							dPeople += dPeopleNew;
-							if (dPeople > 4){
-								printf("Lift can accept up to 4.\n");
-								dPeople = 4;
-								peopleStatus(dPeople);
-							}
-						}
-					if(dPeople == 0){
+						// printf("Are there new people?\n");
+						// scanf("%s",sPeople);
+						// if (strcmp(sPeople,"YES")==0){
+						// 	printf("How many?\n");
+						// 	scanf("%d",&dPeopleNew);
+						// 	dPeople += dPeopleNew;
+						// 	if (dPeople > 4){
+						// 		printf("Lift can accept up to 4.\n");
+						// 		dPeople = 4;
+						// 		peopleStatus(dPeople);
+						// 	}
+						// }
+					//if(dPeople == 0){
 					break;
-					}
+					//}
 					}//endif
 				}
 			}//endwhile
@@ -158,34 +158,32 @@ int main(){
 		else if(dFloorChosenInt<dFloorDefaultInt){
 			while(dFloorChosenInt<dFloorDefaultInt){
 				dFloorDefaultInt--;
-				
-				printStatus(dFloorDefaultInt);
-				peopleStatus(dPeople);
+				printf("\nYou're currently at floor %s",intToFloor(dFloorDefaultInt));
 				strcpy(sFloorNewDefault,intToFloor(dFloorDefaultInt));
 				if ( dFloorDefaultInt != dFloorChosenInt ) {
 					printf("\nStopping here?\n");
 					scanf("%s",sStopping);
 					if (strcmp(sStopping,"YES")==0){
-						printf("How many are leaving?\n");
-						scanf("%d", &dPeopleNew);
-						dPeople -= dPeopleNew;
-						peopleStatus(dPeople);
+						// printf("How many are leaving?\n");
+						// scanf("%d", &dPeopleNew);
+						// dPeople -= dPeopleNew;
+						// peopleStatus(dPeople);
 
-						printf("Are there new people?\n");
-						scanf("%s",sPeople);
-						if (strcmp(sPeople,"YES")==0){
-							printf("How many?\n");
-							scanf("%d",&dPeopleNew);
-							dPeople += dPeopleNew;
-							if (dPeople > 4){
-								printf("Lift can accept up to 4.\n");
-								dPeople = 4;
-								peopleStatus(dPeople);
-							}
-						}
-					if(dPeople == 0){
-					break;
-					}
+						// printf("Are there new people?\n");
+						// scanf("%s",sPeople);
+						// if (strcmp(sPeople,"YES")==0){
+						// 	printf("How many?\n");
+						// 	scanf("%d",&dPeopleNew);
+						// 	dPeople += dPeopleNew;
+						// 	if (dPeople > 4){
+						// 		printf("Lift can accept up to 4.\n");
+						// 		dPeople = 4;
+						// 		peopleStatus(dPeople);
+						// 	}
+						// }
+						//if(dPeople == 0){
+						break;
+						//}
 					}//endif
 				}
 			}//endwhile
@@ -341,9 +339,9 @@ void printStatus(int dFloorInt){
 	printf("Lift at floor %s.\n", intToFloor(dFloorInt));
 }//endfunction
 
-void peopleStatus(int dPeople){
-	printf("There are %d people in the lift.\n", dPeople);
-}
+// void peopleStatus(int dPeople){
+// 	printf("There are %d people in the lift.\n", dPeople);
+// }
 
 
 
