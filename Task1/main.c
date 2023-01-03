@@ -16,8 +16,10 @@ int main(){
 	char sFloorChosen[5] = "G";
 	char sStopping[5];
 	char sFloorNewDefault[5] = "G";
+	char sUserInput[5];
 	int dFloorDefaultInt=sFloorToInt(sFloorDefault);
 	int dFloorChosenInt;
+	int dFloorNewDefaultInt;
 
 	// // while (1){
 	// 	if(floorToInt(dFloor)==10){
@@ -37,13 +39,6 @@ int main(){
 	while(1){
 
 		
-		//printLiftStatus(dFloorDefaultInt);
-		strcpy(sFloorDefault,sFloorNewDefault);
-
-		dFloorChosenInt=sFloorToInt(sFloorChosen);
-		dFloorDefaultInt=sFloorToInt(sFloorDefault);
-
-		
 		//take user input to change floors
 		printf("\n");
 		printButtons();
@@ -55,9 +50,13 @@ int main(){
 			break;
 		}//endif
 
+		strcpy(sFloorDefault,sFloorNewDefault);
+
 		//change two floor variables to integers
 		dFloorChosenInt=sFloorToInt(sFloorChosen);
 		dFloorDefaultInt=sFloorToInt(sFloorDefault);
+		//dFloorNewDefaultInt=sFloorToInt(sFloorNewDefault);
+
 		
 
 		//check for wrong input
@@ -108,6 +107,34 @@ int main(){
 				}
 			}//endwhile
 		}//endelse
+
+
+		if(strcmp(sFloorNewDefault,sFloorChosen)!=0){
+			printf("\n\nGoing to floor %s.\n",sFloorChosen);
+			printf("If you want to ride again, call the elevator with CALL.\n");
+
+			scanf("%s",sUserInput);
+
+			if(strcmp(sUserInput,"CALL")==0){
+
+				printf("\n\nComing from floor %s.\n",sFloorChosen);
+
+				while(dFloorDefaultInt>dFloorChosenInt){
+					dFloorChosenInt++;
+					printf("Lift at floor %s.\n", printLiftStatus(dFloorChosenInt));
+
+				}
+				while(dFloorDefaultInt<dFloorChosenInt){
+					dFloorChosenInt--;
+					printf("Lift at floor %s.\n", printLiftStatus(dFloorChosenInt));
+
+				}
+			}//endif
+			else{
+				printf("Leaving so soon? Bye.!\n");
+				return 0;
+			}//endifelse
+		}//endif
 	}//endmainwhile
 
 
