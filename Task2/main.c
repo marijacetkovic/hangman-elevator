@@ -1,8 +1,23 @@
-#include <stdio.h>
-#include <time.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+/* a hangman program in C
+MARIJA CETKOVIC 89221046 HOMEWORK CP 22/23
+a hangman game played by entering lowercase letters to the console
+blank underspaces of the length of the word to be guessed is displayed
+after each wrong guess a life is taken from the possible 7 and a part of a hangman is drawn
+when 7 is reached player lost 
+after each correct guess the guessed letter appears instead of the underscore
+player wins when all letters are correctly guessed
+it is considered a mistake if the user guesses a letter which was already guessed as correct
+player can choose from 2 difficulties which gives back either shorter or longer words
+also player can quit at any point by typing in 'quit'
+
+*/
+
+
+#include <stdio.h> //printf, scanf (lectures)
+#include <time.h> //to use time(NULL) for rand
+#include <stdlib.h> //rand (source is above randomNumber function)
+#include <string.h> //strcpy, strcmp, strlen,(learned from lectures and CP class git repo codes), memset (source: https://www.tutorialspoint.com/c_standard_library/c_function_memset.htm)
+#include <ctype.h> //isalpha (source: https://www.programiz.com/c-programming/library-function/ctype.h/isalpha)
 
 
 //declare functions on top
@@ -19,7 +34,7 @@ void printChocolate();
 int main(){
 
 	//declare variables
-	char sGuesses[20]; 
+	char sGuesses[4]; //variable to take in char guesses, length 4 so user can type in 'quit'
 	char cLetterGuessed; //holds letter guessed
 	char sWord[30]; //holds the word that user has to guess, length big enough because its not fixed length
 	int dNumCorrect = 0; //counts correct guesses
@@ -58,6 +73,9 @@ int main(){
 	int dVisited[strlen(sWord)]; //has length of sWord
 
 	//use memset function to set every array element to desired element
+	//i could have done it with a for loop but when i found this function i wanted to use it
+	//sizeof(char) and int is 1, it doesnt change strlen of the selected word, 
+	//but (any) explicit reference to strlen(sWord) which is much more readable caused problems with setting displaying desired length of underscores
 	memset(sWordNew, '_', strlen(selectDifficulty(dNumDiff))*sizeof(char)); //set every char of sWordNew array to underscore
 	memset(dVisited, 0, strlen(selectDifficulty(dNumDiff))*sizeof(int)); //set every int of dVisited array to 0
 
@@ -80,14 +98,20 @@ int main(){
 			break;
 		}
 
-
+		//put sGuesses at index 0 (first char) to be the guessed letter
 		cLetterGuessed=sGuesses[0];
-		if (!isalpha(cLetterGuessed)){
-			printf("\nThat's not a letter. \nEnter a letter please.\n");
-			continue;
+
+		//handle non alphabetic guesses
+		if (!isalpha(cLetterGuessed)){//if isalpha is false 
+			printf("\nThat's not a letter. \nEnter a letter please.\n");//not a letter
+			continue;//continue while loop
 		}
+
+		//set counter to be number of correct guesses
+		//when dNumCorrect changes later, counter has to be actualized 
 		dCounter = dNumCorrect;
 
+		//let user know what he entered
 		printf("\nYou entered the letter: %c\n", cLetterGuessed);
 
 		//loop through all letters of sWord with a for loop
@@ -148,9 +172,10 @@ int main(){
 			{
 				//let him know he lost and break while
 				printf("\nAww man! You lost. :(\n");
+				//also show what the word was
 				printf("The word was %s.\n", sWord);
 				printf("Play again for better luck.\n");
-				break;
+				break; //break while and end the program
 			}
 
 	//print current state of sWordNew
@@ -169,47 +194,59 @@ void printWelcome(){
 	printf("Welcome to The Hangman Game!\n");
 	printf("\n");
 	printf("Play by entering letters in the console.\n");
+	printf("Be careful! Lowercase letters only.\n");
 	printf("If you want to quit at any point, just type in 'quit'.\n");
 	printf("Do not enter the correctly guessed letter twice! You'll lose a point.\n");
-	printf("Let's play. :)\n");
+	printf("\nLet's play. :)\n");
 	printf("\n");
 }
 
 
 //random number function
+//source https://stackoverflow.com/questions/17846212/generate-a-random-number-between-1-and-10-in-c
 int randomNumber(int x){
 	srand(time(NULL));//so we get new randomized number each time
 
 	//get a random number in range x+1, x is number of words in our list
-	//random number and modulus x + 1 (modulus gives back every number between 0 and n - 1)
+	//random number and modulus x + 1 (modulus will give back every number between 0 and x - 1)
 	int n = rand()%(x+1);
 	return n;
 }
 
 
 //select difficulty function
+//i thought it was a nice thing to add
 const char* selectDifficulty(int x){
+	//like in task1 i used this article as a reference https://flaviocopes.com/c-return-string/
+	//i wanted to have a function that returns a string
+	//and i could achieve that by returning a const pointer to the first char of the string
 
-	static char sWord[25];
+	static char sWord[25]; //again has to be static (or i could have put char*), if a local variable was used itd have been destroyed and not available to main 
 
-
+	//if user chose 1 give back shorter words
 	if (x == 1) {
 
 		static char words[][8]	=	{"milk","coffee","curtain","cook",
 									"phone","flower","cloud","table",
 									"glasses","light","action","laptop",
 									"koala","pasta","cactus","socks",
-									"plane","sunny"};
-		strcpy(sWord, words[randomNumber(18)]);
+									"plane","sunny","yacht","bottom",
+									"penguin", "soccer", "monkey"};
+		//call random number function to get a random word
+		strcpy(sWord, words[randomNumber(23)]);
 
 
 	}
+	//and if 2 then longer
 	else if (x == 2){
 
 		static char words[][15] =	{"continue", "awkwardly", "allocation",
 									"newspaper", "university", "troubleshoot",
-									"amusement"};
-		strcpy (sWord, words[randomNumber(7)]);
+									"amusement", "mermaid", "dinosaur",
+									"strength", "whiskey", "flashback",
+									"international", "mathematics", "snowboarding"};
+		//also random
+		strcpy (sWord, words[randomNumber(15)]);
 
 	}
 
@@ -219,6 +256,8 @@ const char* selectDifficulty(int x){
 
 //function to print hangman
 void drawHangman(int dNumLives){
+	//i used following drawings from the link https://codegolf.stackexchange.com/questions/135936/ascii-hangman-in-progress
+
 	//switch case statement
 	//as the number of lives gets lower, the picture of the hangman progresses
 	switch (dNumLives){
@@ -307,7 +346,10 @@ void drawHangman(int dNumLives){
 	
 }//endfunction
 
+//function to return a random string from a string array 
+//for the user to get randomized messages after a correct guess
 void generateMessage(){
+	//string array is a 2D char array (lectures)
 
 	static char sMessages[][50]={"Keep up the good work!",
 						  "Bravo! Let's see if you can do more.",
@@ -324,10 +366,13 @@ void generateMessage(){
 						  "Good. Again. If you can."
 
 	};
-
+	//call the random number function and print a random string from sMessages
 	printf("%s\n",sMessages[randomNumber(13)]);
 }
 
+
+//function that prints a winning message to the user 
+//i took the ascii drawing from https://www.asciiart.eu/food-and-drinks/chocolates
 void printChocolate(){
 
 	printf("\nYAAAY! You guessed the word!\n");
